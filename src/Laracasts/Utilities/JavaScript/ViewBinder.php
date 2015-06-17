@@ -7,6 +7,6 @@ interface ViewBinder {
      *
      * @param $js
      */
-    public function bind($js);
+    public function bind();
 
-} 
+}

@@ -26,6 +26,20 @@ class PHPToJavaScriptTransformer {
     ];
 
     /**
+     * Variable array
+     *
+     * @var array
+     */
+    protected $var = [];
+
+    /**
+     * Flag binded js variables for view
+     *
+     * @var bool
+     */
+    protected $jsIsBinded = false;
+
+    /**
      * @param ViewBinder $viewBinder
      * @param string $namespace
      */
@@ -42,13 +56,22 @@ class PHPToJavaScriptTransformer {
      */
     public function put(array $vars)
     {
-        // First, we have to translate the
-        // variables to something JS-friendly.
-        $js = $this->buildJavaScriptSyntax($vars);
+        // concatenate old with new variables
+        $this->var = array_merge_recursive($this->var, $vars);
+
+        // bind vars
+        \App::bind('JavaScript.vars', function()
+        {
+            // variables to something JS-friendly.
+            return $this->buildJavaScriptSyntax($this->var);
+        });
 
         // This is what handles the process of binding
         // our JS vars to the view/page.
-        $this->viewBinder->bind($js);
+        if(!$this->jsIsBinded) {
+            $this->viewBinder->bind();
+            $this->jsIsBinded = true;
+        }
     }
 
     /**
@@ -186,7 +209,7 @@ class PHPToJavaScriptTransformer {
             return "'{$value}'";
         }
     }
-    
+
     /**
      * @param $value
      * @return string
@@ -212,4 +235,4 @@ class PHPToJavaScriptTransformer {
         return str_replace("'", "\\'", $value);
     }
 
-} 
+}

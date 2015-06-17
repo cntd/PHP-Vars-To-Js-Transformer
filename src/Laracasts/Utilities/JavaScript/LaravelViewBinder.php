@@ -30,12 +30,13 @@ class LaravelViewBinder implements ViewBinder {
      *
      * @param $js The ready-to-go JS
      */
-    public function bind($js)
+    public function bind()
     {
-        $this->event->listen("composing: {$this->viewToBindVariables}", function() use ($js)
+        $this->event->listen("composing: {$this->viewToBindVariables}", function()
         {
+            $js = \App::make('JavaScript.vars');
             echo "<script>{$js}</script>";
         });
     }
-    
+
 }
